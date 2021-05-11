@@ -49,7 +49,7 @@ public class ProductServiceUsingThread {
 
     private class ProductInfoRunnable implements Runnable {
         private ProductInfo productInfo;
-        private String productId;
+        private final String productId;
 
         public ProductInfoRunnable(String productId) {
             this.productId = productId;
@@ -68,7 +68,7 @@ public class ProductServiceUsingThread {
     private class ReviewRunnable implements Runnable {
         private Review review;
 
-        private String productId;
+        private final String productId;
 
         public ReviewRunnable(String productId) {
             this.productId = productId;
