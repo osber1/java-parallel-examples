@@ -5,6 +5,7 @@ import com.osvaldas.learning.parallel.service.InventoryService;
 import com.osvaldas.learning.parallel.service.ProductInfoService;
 import com.osvaldas.learning.parallel.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import static com.osvaldas.learning.parallel.util.CommonUtil.stopWatch;
 import static com.osvaldas.learning.parallel.util.LoggerUtil.log;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ProductServiceUsingCompletableFuture {
 
@@ -66,8 +68,19 @@ public class ProductServiceUsingCompletableFuture {
                     return p;
                 });
 
-        CompletableFuture<Review> review = CompletableFuture.supplyAsync(() -> reviewService.retrieveReviews(productId));
-        Product result = cfProductInfo.thenCombine(review, (a, b) -> new Product(productId, a, b)).join();
+        CompletableFuture<Review> review = CompletableFuture.supplyAsync(() -> reviewService.retrieveReviews(productId))
+                .exceptionally(e -> {
+                    log.info("Handled the Exception in reviewService: {}", e.getMessage());
+                    return Review.builder()
+                            .noOfReviews(0)
+                            .overallRating(0.0)
+                            .build();
+                });
+
+        Product result = cfProductInfo
+                .thenCombine(review, (a, b) -> new Product(productId, a, b))
+                .whenComplete((p, e) -> log.info("Inside WhenComplete: {} and exception is: {}", p, e.getMessage()))
+                .join();
         stopWatch.stop();
 
         log("Total Time Taken : " + stopWatch.getTime());
