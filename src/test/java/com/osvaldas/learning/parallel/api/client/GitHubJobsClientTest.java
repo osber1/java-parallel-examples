@@ -2,6 +2,7 @@ package com.osvaldas.learning.parallel.api.client;
 
 import com.osvaldas.learning.parallel.domain.github.GitHubPosition;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -17,13 +18,16 @@ class GitHubJobsClientTest {
     GitHubJobsClient githubClient = new GitHubJobsClient(webClient);
 
     @Test
+    @Disabled
     void testInvokeGitHubJobsApiWithPageNumber() {
         //given
         int pageNumber = 1;
         String description = "JavaScript";
+
         //when
         List<GitHubPosition> gitHubPositions = githubClient.invokeGitHubJobsApiWithPageNumber(pageNumber, description);
         log.info("Positions: {}", gitHubPositions);
+
         //then
         assertThat(gitHubPositions.size()).isGreaterThan(0);
         gitHubPositions.forEach(i -> assertThat(i).isNotNull());
@@ -34,9 +38,11 @@ class GitHubJobsClientTest {
         //given
         List<Integer> pages = List.of(1, 2, 3);
         String description = "Java";
+
         //when
         List<GitHubPosition> gitHubPositions = githubClient.invokeGitHubJobsApiUsingMultiplePageNumbers(pages, description);
         log.info("Positions: {}", gitHubPositions);
+
         //then
         assertThat(gitHubPositions.size()).isGreaterThan(0);
         gitHubPositions.forEach(i -> assertThat(i).isNotNull());
@@ -47,22 +53,27 @@ class GitHubJobsClientTest {
         //given
         List<Integer> pages = List.of(1, 2, 3);
         String description = "Java";
+
         //when
         List<GitHubPosition> gitHubPositions = githubClient.invokeGitHubJobsApiUsingMultiplePageNumbersCompletableFuture(pages, description);
         log.info("Positions: {}", gitHubPositions);
+
         //then
         assertThat(gitHubPositions.size()).isGreaterThan(0);
         gitHubPositions.forEach(i -> assertThat(i).isNotNull());
     }
-    @Test
 
+    @Test
+    @Disabled
     void testInvokeGitHubJobsApiUsingMultiplePageNumbersCompletableFuture_withAnyOf() {
         //given
         List<Integer> pages = List.of(1, 2, 3);
         String description = "Java";
+
         //when
         List<GitHubPosition> gitHubPositions = githubClient.invokeGitHubJobsApiUsingMultiplePageNumbersCompletableFuture_withAnyOf(pages, description);
         log.info("Positions: {}", gitHubPositions);
+
         //then
         assertThat(gitHubPositions.size()).isGreaterThan(0);
         gitHubPositions.forEach(i -> assertThat(i).isNotNull());
